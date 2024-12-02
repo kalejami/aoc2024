@@ -1,0 +1,12 @@
+/.bsp/
+target/
+.bloop/
+.metals/
+.vscode/
+null/
+project/.bloop/
+project/project/
+project/project/target/
+project/target/
+project/metals.sbt
+src/main/resources
