@@ -13,11 +13,9 @@ object day4 extends IOApp {
       .use { bs =>
         val lines = bs.getLines().toList
 
-        def count(xs: List[String]) = {
-          xs.map { s =>
-            xmas.findAllMatchIn(s).size + xmas.findAllIn(s.reverse).size
-          }.sum
-        }
+        def count(xs: List[String]) = xs.map { s =>
+          xmas.findAllMatchIn(s).size + xmas.findAllIn(s.reverse).size
+        }.sum
 
         val horizontal = count(lines)
 
@@ -33,39 +31,26 @@ object day4 extends IOApp {
 
         val vertikal = count(verts)
 
-        def diag(matrix: Array[String]): Array[String] = {
-          val n = matrix.length
-          val diagonals = scala.collection.mutable.ArrayBuffer[String]()
-
-          // Erste Hälfte der Diagonalen von links oben nach rechts unten
-          for (k <- 0 until n) {
-            val diag1 = (0 to k).map(i => matrix(i)(k - i)).mkString
-            diagonals.append(diag1)
-          }
-
-          // Zweite Hälfte der Diagonalen von links oben nach rechts unten
-          for (k <- 1 until n) {
-            val diag2 =
-              (0 until (n - k)).map(i => matrix(k + i)(n - 1 - i)).mkString
-            diagonals.append(diag2)
-          }
-
-          // Erste Hälfte der Diagonalen von rechts oben nach links unten
-          for (k <- 0 until n) {
-            val diag3 = (0 to k).map(i => matrix(i)(n - 1 - k + i)).mkString
-            diagonals.append(diag3)
-          }
-
-          // Zweite Hälfte der Diagonalen von rechts oben nach links unten
-          for (k <- 1 until n) {
-            val diag4 = (0 until (n - k)).map(i => matrix(k + i)(i)).mkString
-            diagonals.append(diag4)
-          }
-
-          diagonals.toArray
+        def diag(xs: Array[String]): List[String] = {
+          val n = xs.length
+          val d1lr =
+            for (k <- 0 until n)
+              yield (0 to k).map(i => xs(i)(k - i)).mkString
+          val d2lr =
+            for (k <- 1 until n)
+              yield (0 until (n - k))
+                .map(i => xs(k + i)(n - 1 - i))
+                .mkString
+          val d1rl =
+            for (k <- 0 until n)
+              yield (0 to k).map(i => xs(i)(n - 1 - k + i)).mkString
+          val d2rl =
+            for (k <- 1 until n)
+              yield (0 until (n - k)).map(i => xs(k + i)(i)).mkString
+          (d1lr ++ d2lr ++ d1rl ++ d2rl).toList
         }
 
-        val diags = diag(lines.toArray).toList
+        val diags = diag(lines.toArray)
 
         val diagonal = count(diags)
 
@@ -110,7 +95,7 @@ object day4 extends IOApp {
 
         def a2: Int = a2Loop(0, 0, 0)
 
-        IO.println(a2)
+        IO.println(a1) >> IO.println(a2)
       }
       .as(ExitCode.Success)
 
