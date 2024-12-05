@@ -32,17 +32,9 @@ object day5 extends IOApp {
 
       val orderM = order.groupMap(_._1)(_._2)
 
-      def a1: Long =
-        queue.map { q =>
-          val withNext = q.zip(q.tail)
-          val isOk = withNext.forall { case (c, n) =>
-            orderM.get(c).fold(false) { l =>
-              l.contains(n)
-            }
-          }
-          if (isOk) q(q.size / 2) else 0L
-        }.sum
-
+      // Sortiert die Elemente in der Liste nach Anzahl moeglicher
+      // gueltiger Nachfolger. Dies muss die richtige Reihenfolge
+      // fuer die Liste ergeben
       def sort(qs: List[Long]) =
         qs.map { q =>
           val relevant = orderM.getOrElse(q, Nil).filter(qs.contains)
@@ -51,18 +43,13 @@ object day5 extends IOApp {
           .reverse
           .map(_._1)
 
-      def a2: Long = {
-        val notOk = queue.filter { q =>
-          val withNext = q.zip(q.tail)
-          val isOk = withNext.forall { case (c, n) =>
-            orderM.get(c).fold(false) { l =>
-              l.contains(n)
-            }
-          }
-          !isOk
-        }
-        notOk.map(sort).map(q => q(q.size / 2)).sum
-      }
+      def a1: Long =
+        queue.map { q => if (q == sort(q)) q(q.size / 2) else 0L }.sum
+
+      def a2: Long = queue.map { q =>
+        val qs = sort(q)
+        if (qs != q) qs(q.size / 2) else 0L
+      }.sum
 
       IO.println(a1) >> IO.println(a2)
     }
