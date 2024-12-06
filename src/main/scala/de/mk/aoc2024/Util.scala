@@ -2,9 +2,61 @@ package de.mk.aoc2024
 
 import cats.effect.{IO, Resource}
 
+import scala.annotation.tailrec
 import scala.io.BufferedSource
 
 object Util {
   def getInput(name: String): Resource[IO, BufferedSource] =
     Resource.make(IO(scala.io.Source.fromResource(name)))(r => IO(r.close()))
+
+  sealed trait Direction extends Product with Serializable
+  object Direction {
+    case object Up extends Direction
+    case object Down extends Direction
+    case object Left extends Direction
+    case object Right extends Direction
+
+    def turnRight(d: Direction): Direction = d match {
+      case Up    => Right
+      case Down  => Left
+      case Left  => Up
+      case Right => Down
+    }
+  }
+
+  final case class Pos(x: Int, y: Int) {
+    def nextPos(direction: Direction): Pos = {
+      import Direction._
+      direction match {
+        case Up    => copy(y = y - 1)
+        case Down  => copy(y = y + 1)
+        case Left  => copy(x = x - 1)
+        case Right => copy(x = x + 1)
+      }
+    }
+  }
+
+  final case class Grid(grid: Vector[Vector[Char]]) {
+    def lookAhead(pos: Pos, direction: Direction): Option[Char] = {
+      charAt(pos.nextPos(direction))
+    }
+
+    def charAt(p: Pos): Option[Char] = grid.lift(p.y).flatMap(_.lift(p.x))
+
+    @tailrec
+    private def indexOfLoop(
+        c: Char,
+        ys: Iterator[(Vector[Char], Int)],
+        result: Option[Pos]
+    ): Option[Pos] = ys.nextOption() match {
+      case Some((xs, y)) =>
+        val index = xs.indexOf(c)
+        if (index != -1) Some(Pos(index, y))
+        else indexOfLoop(c, ys, None)
+      case None => result
+    }
+
+    def indexOf(c: Char): Option[Pos] =
+      indexOfLoop(c, grid.zipWithIndex.iterator, None)
+  }
 }
