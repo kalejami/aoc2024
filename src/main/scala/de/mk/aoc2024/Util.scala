@@ -25,6 +25,9 @@ object Util {
   }
 
   final case class Pos(x: Int, y: Int) {
+    def +(p2: Pos): Pos = Pos(x + p2.x, y + p2.y)
+    def -(p2: Pos): Pos = Pos(x - p2.x, y - p2.y)
+
     def nextPos(direction: Direction): Pos = {
       import Direction._
       direction match {
@@ -42,6 +45,12 @@ object Util {
     }
 
     def charAt(p: Pos): Option[Char] = grid.lift(p.y).flatMap(_.lift(p.x))
+
+    def inBounds(p: Pos): Boolean = {
+      if (p.y < grid.size && p.y >= 0) {
+        grid.headOption.exists(xs => p.x < xs.size && p.x >= 0)
+      } else false
+    }
 
     @tailrec
     private def indexOfLoop(
