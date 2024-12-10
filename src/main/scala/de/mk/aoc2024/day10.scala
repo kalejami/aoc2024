@@ -2,7 +2,6 @@ package de.mk.aoc2024
 
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.all._
-import de.mk.aoc2024.Util.Direction.{Down, Up}
 import de.mk.aoc2024.Util.{Direction, Grid, Pos}
 
 import scala.annotation.tailrec
@@ -39,12 +38,6 @@ object day10 extends IOApp {
         val nexts = findNexts(p, 1)
         (p, findPath(2, nexts))
       }
-
-      case class Path(start: Pos, next: List[Pos])
-
-      println(startingPoses)
-
-      println(paths)
 
       def a1: Long = paths.map(_._2.distinct.size).sum
 
