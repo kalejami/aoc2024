@@ -46,9 +46,9 @@ object day10 extends IOApp {
 
       println(paths)
 
-      def a1: Long = paths.map(_._2.size).sum
+      def a1: Long = paths.map(_._2.distinct.size).sum
 
-      def a2: Long = 0L
+      def a2: Long = paths.map(_._2.size).sum
 
       IO.println(a1) >> IO.println(a2)
     }
