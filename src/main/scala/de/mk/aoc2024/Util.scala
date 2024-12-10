@@ -56,16 +56,17 @@ object Util {
     private def indexOfLoop(
         c: Char,
         ys: Iterator[(Vector[Char], Int)],
-        result: Option[Pos]
-    ): Option[Pos] = ys.nextOption() match {
+        result: List[Pos]
+    ): List[Pos] = ys.nextOption() match {
       case Some((xs, y)) =>
-        val index = xs.indexOf(c)
-        if (index != -1) Some(Pos(index, y))
-        else indexOfLoop(c, ys, None)
+        val indices = xs.zipWithIndex.filter(_._1 == c).map(t => Pos(t._2, y))
+        indexOfLoop(c, ys, result ++ indices)
       case None => result
     }
 
-    def indexOf(c: Char): Option[Pos] =
-      indexOfLoop(c, grid.zipWithIndex.iterator, None)
+    def allIndexOf(c: Char): List[Pos] =
+      indexOfLoop(c, grid.zipWithIndex.iterator, Nil)
+
+    def indexOf(c: Char): Option[Pos] = allIndexOf(c).headOption
   }
 }
